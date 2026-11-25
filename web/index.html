@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <meta name="theme-color" content="#090c12">
-  <meta name="description" content="Social Pulse social media analytics dashboard">
+  <meta name="description" content="A local-first social media analytics dashboard for understanding content performance.">
   <title>Social Pulse — Social Analytics</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,8 +20,9 @@
     </a>
     <nav aria-label="Primary navigation">
       <a class="nav-item active" href="#overview" aria-current="page"><span class="nav-icon">⌂</span><span>Overview</span></a>
+      <a class="nav-item" href="#connect"><span class="nav-icon">↗</span><span>Account</span></a>
       <a class="nav-item" href="#posts"><span class="nav-icon">▦</span><span>Top posts</span></a>
-      <a class="nav-item" href="#audience"><span class="nav-icon">◎</span><span>Audience</span></a>
+      <a class="nav-item" href="#audience"><span class="nav-icon">◎</span><span>Content mix</span></a>
       <a class="nav-item" href="#trends"><span class="nav-icon">⌁</span><span>Trends</span></a>
     </nav>
     <div class="sidebar-foot">
@@ -33,41 +34,78 @@
   <main class="main">
     <header class="topbar">
       <div>
-        <p class="eyebrow">PERFORMANCE DASHBOARD</p>
-        <h1>Good morning, <em>Alex.</em></h1>
+        <p class="eyebrow">CONTENT PERFORMANCE</p>
+        <h1>Your social <em>performance.</em></h1>
       </div>
       <div class="top-actions">
-        <label class="period-select">Nov 03 — Nov 12
+        <label class="period-select"><span id="date-range">All dates</span>
           <select id="platform-filter" aria-label="Filter by platform">
-            <option>All</option><option>Instagram</option><option>TikTok</option><option>LinkedIn</option><option>X</option>
+            <option>All</option>
           </select>
         </label>
-        <button class="icon-button" id="theme-button" type="button" aria-label="Toggle display theme">◐</button>
-        <label class="upload-button" for="csv-file">+ Import data</label>
-        <input id="csv-file" type="file" accept=".csv,text/csv" hidden>
+        <button class="icon-button" id="theme-button" type="button" aria-label="Toggle display theme" aria-pressed="false">◐</button>
+        <button class="upload-button" id="header-upload" type="button">+ Import CSV</button>
+        <input id="csv-file" type="file" accept=".csv,text/csv" aria-label="Import a CSV file" hidden>
       </div>
     </header>
 
+    <section class="account-card" id="connect" aria-labelledby="account-title">
+      <div class="account-copy">
+        <p class="eyebrow">YOUR ACCOUNT</p>
+        <h2 id="account-title">Start with a profile <em>link</em></h2>
+        <p>A link identifies the platform, but it cannot unlock private analytics. Import your platform’s CSV export for real account insights.</p>
+      </div>
+      <form class="account-form" id="profile-form">
+        <label class="sr-only" for="profile-url">Public social profile URL</label>
+        <input id="profile-url" name="profile-url" type="url" placeholder="https://instagram.com/yourname" autocomplete="url" required>
+        <button class="upload-button" type="submit">Review account</button>
+        <button class="import-link-button" id="import-account" type="button">Import analytics CSV</button>
+      </form>
+      <div class="account-feedback" aria-live="polite">
+        <p id="account-status">Your profile link stays in this browser session.</p>
+        <a id="profile-link" href="#" target="_blank" rel="noopener noreferrer" hidden>Open profile ↗</a>
+      </div>
+    </section>
+
     <section class="kpi-grid" id="overview" aria-label="Key performance indicators">
       <article class="kpi-card accent-card">
-        <div class="kpi-label"><span>AVG. ENGAGEMENT</span><span class="trend-up">↗ 12.4%</span></div>
+        <div class="kpi-label"><span>AVG. ENGAGEMENT RATE</span></div>
         <strong class="kpi-value" id="avg-engagement">—</strong>
         <div class="spark-bars" id="engagement-spark" aria-hidden="true"></div>
       </article>
       <article class="kpi-card">
-        <div class="kpi-label"><span>TOTAL REACH</span><span class="kpi-icon">◎</span></div>
+        <div class="kpi-label"><span>TOTAL LIKES</span><span class="kpi-icon">◎</span></div>
         <strong class="kpi-value" id="total-likes">—</strong>
-        <p>Likes across the selected period</p>
+        <p>Total likes across analyzed posts</p>
       </article>
       <article class="kpi-card">
-        <div class="kpi-label"><span>CONVERSATIONS</span><span class="kpi-icon">◌</span></div>
+        <div class="kpi-label"><span>TOTAL COMMENTS</span><span class="kpi-icon">◌</span></div>
         <strong class="kpi-value" id="total-comments">—</strong>
         <p>Comments received</p>
       </article>
       <article class="kpi-card">
-        <div class="kpi-label"><span>AMPLIFICATIONS</span><span class="kpi-icon">↗</span></div>
+        <div class="kpi-label"><span>TOTAL SHARES</span><span class="kpi-icon">↗</span></div>
         <strong class="kpi-value" id="total-shares">—</strong>
         <p>Times your content was shared</p>
+      </article>
+      <article class="kpi-card">
+        <div class="kpi-label"><span>FOLLOWERS TRACKED</span><span class="kpi-icon">◎</span></div>
+        <strong class="kpi-value" id="total-followers">—</strong>
+        <p>Latest count in each selected platform</p>
+      </article>
+    </section>
+
+    <section class="insights-grid" aria-label="Recommendations and best posting time">
+      <article class="panel recommendation-panel">
+        <div class="panel-heading">
+          <div><p class="eyebrow">NEXT BEST MOVES</p><h2>Turn insights into <em>action</em></h2></div>
+        </div>
+        <div id="recommendation-list" class="recommendation-list"></div>
+      </article>
+      <article class="panel time-panel">
+        <div><p class="eyebrow">POSTING WINDOW</p><h2>Your best time to <em>post</em></h2></div>
+        <strong id="best-time">Add post times</strong>
+        <p id="best-time-detail">Import a CSV with a time column to find your strongest hour.</p>
       </article>
     </section>
 
@@ -75,10 +113,10 @@
       <article class="panel performance-panel" id="trends">
         <div class="panel-heading">
           <div><p class="eyebrow">ENGAGEMENT OVER TIME</p><h2>Performance <em>pulse</em></h2></div>
-          <span class="live-badge"><i></i> LIVE DATA</span>
+          <span class="live-badge"><i></i> ANALYZED DATA</span>
         </div>
         <div class="chart-wrap">
-          <div class="chart-y" aria-hidden="true"><span>40</span><span>30</span><span>20</span><span>10</span><span>0</span></div>
+          <div class="chart-y" aria-hidden="true"><span>—</span><span>—</span><span>—</span><span>—</span><span>0</span></div>
           <svg id="timeline-chart" viewBox="0 0 720 250" role="img" aria-label="Engagement timeline"></svg>
         </div>
       </article>
@@ -94,10 +132,10 @@
     <section class="posts-section" id="posts">
       <div class="panel-heading posts-heading">
         <div><p class="eyebrow">TOP CONTENT</p><h2>Posts making <em>an impact</em></h2></div>
-        <button class="text-button" id="download-button" type="button">Export report ↗</button>
+        <button class="text-button" id="download-button" type="button">Export top posts ↗</button>
       </div>
       <div class="posts-table" role="table" aria-label="Top posts">
-        <div class="table-head" role="row"><span>POST</span><span>PLATFORM</span><span>LIKES</span><span>COMMENTS</span><span>ENGAGEMENT</span></div>
+        <div class="table-head" role="row"><span>POST</span><span>PLATFORM</span><span>LIKES</span><span>COMMENTS</span><span>SHARES</span><span>ENGAGEMENT RATE</span></div>
         <div id="posts-list"></div>
       </div>
     </section>
