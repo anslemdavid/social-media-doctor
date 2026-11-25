@@ -17,7 +17,7 @@ Social Pulse turns social media post exports into a clear, interactive report: c
 - Responsive dashboard, light/dark theme toggle, and keyboard-accessible controls
 - Imported data is processed in memory and not saved or sent to a third party
 
-Pasting a profile link identifies the platform; it does **not** grant access to account analytics. Social Pulse does not scrape profiles or connect to social networks. Import an analytics export from an account you own to see its real performance.
+Pasting a profile link identifies the platform; it does **not** fetch account analytics. The dashboard starts with fictional demo data and hides those charts after a profile is submitted, until you import real data. Social Pulse does not scrape profiles or connect to social networks. Choose **Import analytics CSV** and upload an export you own using the columns below to review real performance; the link will then filter the imported report by platform.
 
 ## Preview
 

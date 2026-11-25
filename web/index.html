@@ -53,16 +53,17 @@
       <div class="account-copy">
         <p class="eyebrow">YOUR ACCOUNT</p>
         <h2 id="account-title">Start with a profile <em>link</em></h2>
-        <p>A link identifies the platform, but it cannot unlock private analytics. Import your platform’s CSV export for real account insights.</p>
+        <p>A profile link identifies the platform; it cannot fetch private account analytics. Import your post data to review real performance.</p>
       </div>
       <form class="account-form" id="profile-form">
         <label class="sr-only" for="profile-url">Public social profile URL</label>
         <input id="profile-url" name="profile-url" type="url" placeholder="https://instagram.com/yourname" autocomplete="url" required>
         <button class="upload-button" type="submit">Review account</button>
         <button class="import-link-button" id="import-account" type="button">Import analytics CSV</button>
+        <p class="import-help">CSV columns: date, platform, content_type, caption, likes, comments, shares, followers. Add optional time (24-hour HH:MM) for posting-time insights.</p>
       </form>
       <div class="account-feedback" aria-live="polite">
-        <p id="account-status">Your profile link stays in this browser session.</p>
+        <p id="account-status">Demo data is shown until you import your own account data.</p>
         <a id="profile-link" href="#" target="_blank" rel="noopener noreferrer" hidden>Open profile ↗</a>
       </div>
     </section>

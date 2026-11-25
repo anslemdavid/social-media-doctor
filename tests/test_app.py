@@ -96,6 +96,8 @@ class SocialPulseTests(unittest.TestCase):
                 self.assertEqual(response.status, 200)
                 self.assertIn("Social Pulse", page)
                 self.assertIn('id="timeline-chart"', page)
+                self.assertIn('id="profile-form"', page)
+                self.assertIn("Demo data is shown until you import your own account data.", page)
                 self.assertEqual(response.headers["X-Content-Type-Options"], "nosniff")
                 self.assertIn("frame-ancestors 'none'", response.headers["Content-Security-Policy"])
             with urlopen(base + "/api/analyze") as response:

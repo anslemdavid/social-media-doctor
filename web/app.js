@@ -6,6 +6,7 @@ const formatNumber = (value) => new Intl.NumberFormat("en-US", {
 
 let report = null;
 let uploadedCsv = null;
+let profilePlatform = null;
 
 function showToast(message) {
   const toast = qs("#toast");
@@ -33,6 +34,7 @@ async function loadReport(platform = "All", csv = uploadedCsv) {
     if (!response.ok) throw new Error(data.error || "Could not analyze this data");
     report = data;
     uploadedCsv = csv;
+    if (csv !== null) document.body.classList.remove("account-review-pending");
     render(data, platform);
     return true;
   } catch (error) {
@@ -219,7 +221,21 @@ qs("#csv-file").addEventListener("change", async (event) => {
   }
   try {
     const csv = await file.text();
-    if (await loadReport(qs("#platform-filter").value, csv)) {
+    if (await loadReport("All", csv)) {
+      const availablePlatform = profilePlatform && report?.available_platforms?.find(
+        (name) => name.toLowerCase() === profilePlatform.toLowerCase()
+          || (profilePlatform === "X" && name.toLowerCase() === "twitter"),
+      );
+      if (availablePlatform) {
+        qs("#platform-filter").value = availablePlatform;
+        if (await loadReport(availablePlatform, csv)) {
+          qs("#account-status").textContent = `${availablePlatform} account data imported and selected.`;
+        }
+      } else if (profilePlatform) {
+        qs("#account-status").textContent = (
+          `CSV imported, but it has no ${profilePlatform} posts. Showing all platforms in the file.`
+        );
+      }
       showToast(`${file.name} imported`);
     }
   } catch {
@@ -235,6 +251,8 @@ qs("#profile-form").addEventListener("submit", (event) => {
   event.preventDefault();
   const status = qs("#account-status");
   const link = qs("#profile-link");
+  profilePlatform = null;
+  document.body.classList.remove("account-review-pending");
   const supportedHosts = [
     ["instagram.com", "Instagram"],
     ["tiktok.com", "TikTok"],
@@ -258,13 +276,28 @@ qs("#profile-form").addEventListener("submit", (event) => {
 
     link.href = profile.href;
     link.hidden = false;
-    status.textContent = `${platform[1]} link recognized. Import your account export to see its real analytics; Social Pulse does not scrape profiles.`;
+    profilePlatform = platform[1];
+    if (uploadedCsv === null) {
+      document.body.classList.add("account-review-pending");
+      status.textContent = (
+        `${platform[1]} link recognized, but links don't provide account analytics. `
+        + "Import your account CSV below to review it. Demo charts are hidden until then."
+      );
+      return;
+    }
+
     const availablePlatform = report?.available_platforms?.find(
-      (name) => name.toLowerCase() === platform[1].toLowerCase(),
+      (name) => name.toLowerCase() === platform[1].toLowerCase()
+        || (platform[1] === "X" && name.toLowerCase() === "twitter"),
     );
     if (availablePlatform) {
       qs("#platform-filter").value = availablePlatform;
+      status.textContent = `${availablePlatform} is selected from your imported data.`;
       loadReport(availablePlatform);
+    } else {
+      status.textContent = (
+        `${platform[1]} link recognized, but your imported CSV has no matching platform posts.`
+      );
     }
   } catch (error) {
     link.hidden = true;
